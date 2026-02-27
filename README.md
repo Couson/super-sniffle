@@ -101,113 +101,123 @@ We tested 5 diverse prompts through the feedback loop to evaluate the system's a
 
 ### Test Summary
 
-| # | Scene | Initial | Best | Best Iter | Iterations | Meshes | Screenshot |
-|---|-------|---------|------|-----------|------------|--------|------------|
-| 1 | Desert Oasis | 4/10 | 5/10 | 2 | 3 | 37 | ![](assets/desert_oasis.png) |
-| 2 | Space Station | 6/10 | 6/10 | 1 | 3 | 9 | ![](assets/space_station.png) |
-| 3 | Japanese Garden | 5/10 | 5/10 | 1 | 3 | 33 | ![](assets/japanese_garden.png) |
-| 4 | Mountain Village | 5/10 | 5/10 | 1 | 3 | 55 | ![](assets/mountain_village.png) |
-| 5 | Coastal Harbor | 5/10 | 5/10 | 1 | 3 | 19 | ![](assets/coastal_harbor.png) |
+| # | Scene | Initial | Best | Best Iter | Iterations | Entities | Screenshot |
+|---|-------|---------|------|-----------|------------|----------|------------|
+| 1 | Desert Oasis | 6/10 | 6/10 | 1 | 5 | 13 | ![](assets/desert_oasis.png) |
+| 2 | Space Station | 6/10 | 7/10 | 5 | 5 | 11 | ![](assets/space_station.png) |
+| 3 | Japanese Garden | 6/10 | 6/10 | 1 | 5 | 10 | ![](assets/japanese_garden.png) |
+| 4 | Mountain Village | 5/10 | 5/10 | 1 | 5 | 7 | ![](assets/mountain_village.png) |
+| 5 | Coastal Harbor | 5/10 | 5/10 | 1 | 5 | 6 | ![](assets/coastal_harbor.png) |
 
 **Key: Best Iter** = Iteration with highest score (system returns this scene)
 
 ### Detailed Iteration Analysis
 
 <details>
-<summary><b>Desert Oasis</b> - Score improved: 4 → 5 (kept iteration 2)</summary>
+<summary><b>Desert Oasis</b> - Best at iteration 1 (score 6)</summary>
 
 **Prompt:** `a desert oasis with palm trees, a small pond, and scattered rocks surrounded by sand dunes`
 
-| Iteration | Entities | Meshes | Score | Result |
-|-----------|----------|--------|-------|--------|
-| 1 | 9 | 28 | 4/10 | Pond missing, trees clustered, scene sparse |
-| 2 | 9 | 37 | **5/10** | ★ Best - Improved with pond and better layout |
-| 3 | 10 | 38 | 5/10 | Similar score, iteration 2 kept |
+| Iteration | Score | Result |
+|-----------|-------|--------|
+| 1 | **6/10** | ★ Best - Oasis with trees, pond, and dunes |
+| 2 | 3/10 | Regression - Mountains too dominant |
+| 3 | 4/10 | Gray ground instead of sandy |
+| 4 | 5/10 | Sparse, dunes not surrounding |
+| 5 | 3/10 | Color issues persist |
 
 **Critic Feedback:**
-- "The pond is missing from the scene"
-- "The palm trees are positioned too close together"
-- "The scene appears too sparse with emphasis on empty space"
+- "The mountains surrounding the oasis are disproportionately small"
+- "The pond is positioned off-center"
+- "Ground and mountains are gray instead of sandy brown"
 
 ![Desert Oasis](assets/desert_oasis.png)
 
 </details>
 
 <details>
-<summary><b>Space Station</b> - Best at iteration 1 (later iterations didn't improve)</summary>
+<summary><b>Space Station</b> - Score improved: 6 → 7 (best at iteration 5)</summary>
 
 **Prompt:** `a futuristic space station platform with cylindrical modules, a communication tower, and landing pads`
 
-| Iteration | Entities | Meshes | Score | Result |
-|-----------|----------|--------|-------|--------|
-| 1 | 7 | 9 | **6/10** | ★ Best - Basic layout established |
-| 2 | 9 | 19 | 6/10 | Tower floating, landing pad overlaps |
-| 3 | 12 | 19 | 6/10 | No improvement, iteration 1 returned |
+| Iteration | Score | Result |
+|-----------|-------|--------|
+| 1 | 6/10 | Basic layout, communication tower missing |
+| 2 | 6/10 | Modules floating above platform |
+| 3 | 6/10 | Scale issues persist |
+| 4 | 6/10 | Similar issues |
+| 5 | **7/10** | ★ Best - Improved positioning and density |
 
 **Critic Feedback:**
-- "The scene looks sparse, elements too spread out"
-- "Colors of cylinders and platform blend too much"
-- "Landing pad on edge of platform seems unbalanced"
+- "Cylindrical modules are floating above the platform"
+- "Ground color is too stark"
+- "Scene feels sparse and lacks visual coherence"
 
 ![Space Station](assets/space_station.png)
 
 </details>
 
 <details>
-<summary><b>Japanese Garden</b> - Best at iteration 1</summary>
+<summary><b>Japanese Garden</b> - Best at iteration 1 (score 6)</summary>
 
 **Prompt:** `a serene Japanese garden with a small bridge over a pond, stone lanterns, and bonsai trees`
 
-| Iteration | Entities | Meshes | Score | Result |
-|-----------|----------|--------|-------|--------|
-| 1 | 10 | 33 | **5/10** | ★ Best - Bridge and pond present |
-| 2 | 14 | 51 | 5/10 | More elements but same score |
-| 3 | 19 | 93 | 5/10 | Many meshes but quality unchanged |
+| Iteration | Score | Result |
+|-----------|-------|--------|
+| 1 | **6/10** | ★ Best - Bridge, pond, and basic layout |
+| 2 | 4/10 | Bridge not over pond properly |
+| 3 | 5/10 | Minor improvements |
+| 4 | 4/10 | Stone lanterns still not visible |
+| 5 | 4/10 | Persistent issues |
 
 **Critic Feedback:**
-- "Bonsai trees are missing from the scene"
-- "Stone lanterns are not visible"
-- "The scene feels too sparse and empty"
+- "Bridge does not appear to connect to the pond area"
+- "Stone lanterns are missing"
+- "The scene needs more elements to feel like a garden"
 
 ![Japanese Garden](assets/japanese_garden.png)
 
 </details>
 
 <details>
-<summary><b>Mountain Village</b> - Score dropped but best kept (5 → 3 → 3, returned 5)</summary>
+<summary><b>Mountain Village</b> - Consistent at iteration 1 (score 5)</summary>
 
 **Prompt:** `a small mountain village with wooden cabins, a church, and pine trees on a hillside`
 
-| Iteration | Entities | Meshes | Score | Result |
-|-----------|----------|--------|-------|--------|
-| 1 | 8 | 55 | **5/10** | ★ Best - Village with cabins and church |
-| 2 | 12 | 95 | 3/10 | ⚠️ Score dropped - cabins missing! |
-| 3 | 10 | 75 | 3/10 | Still low, iteration 1 returned |
+| Iteration | Score | Result |
+|-----------|-------|--------|
+| 1 | **5/10** | ★ Best - Village with mountain backdrop |
+| 2 | 5/10 | Mountain too dominant |
+| 3 | 4/10 | Cabins missing, sparse layout |
+| 4 | 4/10 | Mountain overwhelms village |
+| 5 | 5/10 | Similar to iteration 1 |
 
 **Critic Feedback:**
-- "Village on flat plane rather than hillside"
-- "Mountain base very small compared to village"
-- Iteration 2: "Wooden cabins and church are missing" (regression!)
+- "The mountain is positioned too close to the edge"
+- "Trees are sparsely positioned and isolated"
+- "The mountain's scale is too large, overwhelming village features"
 
 ![Mountain Village](assets/mountain_village.png)
 
 </details>
 
 <details>
-<summary><b>Coastal Harbor</b> - Consistent score across iterations</summary>
+<summary><b>Coastal Harbor</b> - Best at iteration 1 (score 5)</summary>
 
 **Prompt:** `a coastal harbor with a lighthouse, wooden pier, boats, and a stone bridge`
 
-| Iteration | Entities | Meshes | Score | Result |
-|-----------|----------|--------|-------|--------|
-| 1 | 5 | 19 | **5/10** | ★ Best - All elements present |
-| 2 | 5 | 19 | 5/10 | Boats still on pier not water |
-| 3 | 6 | 22 | 5/10 | Consistent, iteration 1 returned |
+| Iteration | Score | Result |
+|-----------|-------|--------|
+| 1 | **5/10** | ★ Best - Lighthouse, boats, bridge present |
+| 2 | 5/10 | Water still not visible |
+| 3 | 4/10 | Pier missing, boats too small |
+| 4 | 4/10 | Boats on green plane not water |
+| 5 | 4/10 | Persistent water issues |
 
 **Critic Feedback:**
-- "Boats are located on pier rather than in water"
-- "Ground is green, doesn't resemble water body"
-- "Stone bridge scale too small relative to lighthouse"
+- "The wooden pier is missing from the scene"
+- "The water is not visible"
+- "Boats are floating on a green plane instead of water"
 
 ![Coastal Harbor](assets/coastal_harbor.png)
 
@@ -215,26 +225,24 @@ We tested 5 diverse prompts through the feedback loop to evaluate the system's a
 
 ### Key Observations
 
-1. **Best Score Preservation**: The system now keeps the highest-scoring scene across iterations. Mountain Village showed this clearly: scores went 5→3→3, but iteration 1 (score 5) was returned.
+1. **Best Score Preservation**: The system keeps the highest-scoring scene across iterations. Most test cases (4/5) had their best score at iteration 1, with later iterations often regressing.
 
-2. **Issue Categories Detected** (from 5 test scenes):
+2. **Space Station Improvement**: The only scene to improve was Space Station (6→7), showing the feedback loop can help when the critic provides actionable fixes.
+
+3. **Issue Categories Detected** (from 5 test scenes):
    | Issue Type | Count | Description |
    |------------|-------|-------------|
-   | Position | 15 | Objects floating, overlapping, or misplaced |
-   | Missing | 12 | Elements from prompt not rendered |
-   | Composition | 10 | Layout too sparse or unbalanced |
-   | Scale | 5 | Size mismatches between objects |
-   | Color | 4 | Colors not matching expectations |
-
-3. **Iteration Patterns**: 
-   - Desert Oasis improved (4→5) and kept iteration 2
-   - 4/5 scenes had best score at iteration 1
-   - Later iterations sometimes regress (Mountain Village: 5→3)
+   | Position | 26 | Objects floating, overlapping, or misplaced |
+   | Missing | 15 | Elements from prompt not rendered |
+   | Composition | 11 | Layout too sparse or unbalanced |
+   | Scale | 7 | Size mismatches between objects |
+   | Color | 8 | Colors not matching expectations (e.g., "sandy brown") |
 
 4. **Limitations Observed**:
-   - Some specialized entities (bonsai, stone lanterns) lack decomposition rules
-   - Z-positioning (floating objects) is a recurring challenge
-   - Color naming inconsistencies (e.g., "sandy brown" not recognized)
+   - Color naming: "sandy brown", "sandybrown", "metallic gray" not in color map
+   - Water rendering: Coastal/harbor scenes struggle with water planes
+   - Scale balance: Mountains often dominate village elements
+   - Z-positioning: Objects floating above ground is recurring
 
 ## Supported Entities
 
