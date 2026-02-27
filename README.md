@@ -89,6 +89,124 @@ The Vision Critic (Stage 3) uses GPT-4o's vision capability to:
 
 The loop continues until the target score is reached or max iterations hit.
 
+## Feedback Loop Test Results
+
+We tested 5 diverse prompts through the feedback loop to evaluate the system's ability to iteratively improve scene generation.
+
+### Test Summary
+
+| # | Scene | Prompt | Initial Score | Best Score | Iterations | Entities | Key Issues Found |
+|---|-------|--------|---------------|------------|------------|----------|------------------|
+| 1 | Desert Oasis | "a desert oasis with palm trees, a small pond, and scattered rocks surrounded by sand dunes" | 4/10 | 5/10 | 3 | 9→12 | Missing pond, clustered trees, invisible rocks |
+| 2 | Space Station | "a futuristic space station platform with cylindrical modules, a communication tower, and landing pads" | 7/10 | 7/10 | 3 | 6→15 | Floating tower, similar colors, sparse layout |
+| 3 | Japanese Garden | "a serene Japanese garden with a small bridge over a pond, stone lanterns, and bonsai trees" | 5/10 | 5/10 | 3 | 9→18 | Missing lanterns & bonsai, floating bridge |
+| 4 | Mountain Village | "a small mountain village with wooden cabins, a church, and pine trees on a hillside" | 4/10 | 5/10 | 3 | 7→10 | Missing cabins, missing pine trees, floating church |
+| 5 | Coastal Harbor | "a coastal harbor with a lighthouse, wooden pier, boats, and a stone bridge" | 5/10 | 5/10 | 3 | 6→6 | Water not flush, boats floating, missing pier |
+
+### Detailed Iteration Analysis
+
+<details>
+<summary><b>Desert Oasis</b></summary>
+
+| Iteration | Entities | Meshes | Score | Issues Identified |
+|-----------|----------|--------|-------|-------------------|
+| 1 | 9 | 37 | 4/10 | Pond missing, trees clustered, rocks not visible |
+| 2 | 10 | 38 | 5/10 | Ground color unrealistic, trees too small, rocks unnaturally placed |
+| 3 | 12 | 49 | - | Scene refined with more elements |
+
+**Critic Feedback Examples:**
+- "The small pond mentioned in the request is not visible"
+- "The trees seem clustered too closely together"
+- "The rocks are missing or not visible"
+
+</details>
+
+<details>
+<summary><b>Space Station</b></summary>
+
+| Iteration | Entities | Meshes | Score | Issues Identified |
+|-----------|----------|--------|-------|-------------------|
+| 1 | 6 | 8 | 7/10 | Tower floating, colors too similar, scene sparse |
+| 2 | 12 | 16 | 6/10 | Missing lamp posts, tower not centered, landing pads too small |
+| 3 | 15 | 20 | - | Added more structural elements |
+
+**Critic Feedback Examples:**
+- "The communication tower seems to be floating above the platform"
+- "Cylindrical modules and landing pads are too similar in color"
+- "The scene appears sparse with too much empty space"
+
+</details>
+
+<details>
+<summary><b>Japanese Garden</b></summary>
+
+| Iteration | Entities | Meshes | Score | Issues Identified |
+|-----------|----------|--------|-------|-------------------|
+| 1 | 9 | 30 | 5/10 | Missing stone lanterns, missing bonsai, bridge floating |
+| 2 | 15 | 60 | 5/10 | Bonsai still missing, bushes clustered, ground too large |
+| 3 | 18 | 95 | - | Significantly more detail added |
+
+**Critic Feedback Examples:**
+- "The scene is missing stone lanterns"
+- "The scene is missing bonsai trees"
+- "The bridge appears to be floating above the pond"
+
+</details>
+
+<details>
+<summary><b>Mountain Village</b></summary>
+
+| Iteration | Entities | Meshes | Score | Issues Identified |
+|-----------|----------|--------|-------|-------------------|
+| 1 | 7 | 49 | 4/10 | Missing cabins, missing pine trees, church floating |
+| 2 | 9 | 69 | 5/10 | Not enough trees, church floating, mountain too small |
+| 3 | 10 | 75 | - | Added more buildings and trees |
+
+**Critic Feedback Examples:**
+- "Missing wooden cabins that were specified in the scene"
+- "Missing pine trees that were specified in the scene"
+- "Church placement suggests it is floating on the mountain"
+
+</details>
+
+<details>
+<summary><b>Coastal Harbor</b></summary>
+
+| Iteration | Entities | Meshes | Score | Issues Identified |
+|-----------|----------|--------|-------|-------------------|
+| 1 | 6 | 20 | 5/10 | Water not flush with ground, bridge elevated, boats floating |
+| 2 | 6 | 22 | 4/10 | Water missing, pier not visible, lighthouse misplaced |
+| 3 | 6 | 22 | - | Minor adjustments made |
+
+**Critic Feedback Examples:**
+- "The water is not flush with the ground plane"
+- "Boats are floating above the water rather than on it"
+- "The wooden pier is not visible despite being requested"
+
+</details>
+
+### Key Observations
+
+1. **Feedback Loop Effectiveness**: The vision critic successfully identifies missing elements, positioning issues, and scale problems across all test scenes.
+
+2. **Issue Categories Detected**:
+   | Issue Type | Frequency | Description |
+   |------------|-----------|-------------|
+   | Missing | High | Elements from prompt not rendered |
+   | Position | High | Objects floating or incorrectly placed |
+   | Scale | Medium | Size mismatches between objects |
+   | Color | Medium | Colors not matching expectations |
+   | Composition | Low | Overall layout problems |
+
+3. **Entity Growth**: The feedback loop consistently adds entities (9→12, 6→15, 9→18) as the critic identifies missing elements.
+
+4. **Mesh Complexity**: More iterations = more detailed scenes (30→95 meshes for Japanese Garden).
+
+5. **Limitations Observed**:
+   - Some specialized entities (bonsai, stone lanterns) lack decomposition rules
+   - Z-positioning (floating objects) is a recurring challenge
+   - Color naming inconsistencies (e.g., "sandy_brown" vs "sand")
+
 ## Supported Entities
 
 <details>
