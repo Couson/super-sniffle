@@ -26,29 +26,35 @@ User Prompt → [Stage 1: LLM] → Entities → [Stage 2: Rules] → Render → 
 
 ## Examples
 
-### Medieval Village
+### Desert Oasis
 ```
-"a medieval village with a church, market square, fountain, and houses"
+"a desert oasis with palm trees, a small pond, and scattered rocks surrounded by sand dunes"
 ```
-![Medieval Village](assets/medieval_village.png)
+![Desert Oasis](assets/desert_oasis.png)
 
-### Mountain Lake
+### Space Station
 ```
-"a snowy mountain range with pine trees and a frozen lake at the base"
+"a futuristic space station platform with cylindrical modules, a communication tower, and landing pads"
 ```
-![Mountain Lake](assets/mountain_lake.png)
+![Space Station](assets/space_station.png)
 
-### Harbor Scene
+### Japanese Garden
+```
+"a serene Japanese garden with a small bridge over a pond, stone lanterns, and bonsai trees"
+```
+![Japanese Garden](assets/japanese_garden.png)
+
+### Mountain Village
+```
+"a small mountain village with wooden cabins, a church, and pine trees on a hillside"
+```
+![Mountain Village](assets/mountain_village.png)
+
+### Coastal Harbor
 ```
 "a coastal harbor with a lighthouse, wooden pier, boats, and a stone bridge"
 ```
-![Harbor](assets/harbor.png)
-
-### Forest Clearing
-```
-"a forest clearing with 20 trees surrounding a pond and scattered rocks"
-```
-![Forest](assets/forest.png)
+![Coastal Harbor](assets/coastal_harbor.png)
 
 ## Quick Start
 

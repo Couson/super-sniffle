@@ -1,9 +1,4 @@
-rhino3dm
 pyvista
-compute_rhino3d
 numpy
 openai
-ipywidgets
-ipython
-notebook
-python-dotenv 
+python-dotenv
