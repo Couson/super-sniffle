@@ -796,8 +796,6 @@ class EntityAgent:
             "height_scale": 2,
             "roughness": 0.15
         }]
-        
-        return primitives
     
     @staticmethod
     def _decompose_pond(entity: dict) -> list:
@@ -1483,16 +1481,23 @@ Return the complete scene JSON with all entities."""
     return result
 
 
-def generate_scene_with_feedback(prompt: str, max_iterations: int = 3, 
+def generate_scene_with_feedback(prompt: str, max_iterations: int = 5, 
                                   target_score: int = 8, auto_refine: bool = True) -> tuple:
     """
     Full pipeline with feedback loop.
+    Keeps the best scoring scene across all iterations.
     
     Returns: (final_meshes, final_scene_data, iteration_history)
     """
     history = []
     scene_data = None
     meshes = None
+    
+    # Track best scene across iterations
+    best_score = -1
+    best_meshes = None
+    best_scene_data = None
+    best_iteration = 0
     
     for iteration in range(max_iterations):
         print(f"\n{'─'*50}")
@@ -1527,6 +1532,16 @@ def generate_scene_with_feedback(prompt: str, max_iterations: int = 3,
             print(f"  ✓ Stage 3: Critic score = {score}/10")
             print(f"    Analysis: {feedback.get('analysis', '')[:200]}...")
             
+            # Track best scene
+            if score > best_score:
+                best_score = score
+                best_meshes = meshes
+                best_scene_data = scene_data
+                best_iteration = iteration + 1
+                print(f"    ★ New best score! (iteration {best_iteration})")
+            else:
+                print(f"    (Best remains: {best_score}/10 from iteration {best_iteration})")
+            
             if feedback.get("issues"):
                 print(f"    Issues found: {len(feedback['issues'])}")
                 for issue in feedback["issues"][:30]:
@@ -1537,20 +1552,40 @@ def generate_scene_with_feedback(prompt: str, max_iterations: int = 3,
                 "entity_count": entity_count,
                 "primitive_count": len(primitives),
                 "mesh_count": len(meshes),
-                "feedback": feedback
+                "feedback": feedback,
+                "score": score
             })
             
             if score >= target_score:
                 print(f"  ✓ Target score reached! Stopping refinement.")
                 break
         else:
+            # Last iteration - get final score
+            image_b64 = render_to_image(meshes)
+            feedback = get_critic_feedback(image_b64, prompt, scene_data)
+            score = feedback.get("score", 0)
+            print(f"  ✓ Final score: {score}/10")
+            
+            if score > best_score:
+                best_score = score
+                best_meshes = meshes
+                best_scene_data = scene_data
+                best_iteration = iteration + 1
+                print(f"    ★ New best score! (iteration {best_iteration})")
+            
             history.append({
                 "iteration": iteration + 1,
                 "entity_count": entity_count,
                 "primitive_count": len(primitives),
                 "mesh_count": len(meshes),
-                "feedback": None
+                "feedback": feedback,
+                "score": score
             })
+    
+    # Return best scene, not last scene
+    if best_meshes is not None:
+        print(f"\n  ✓ Returning best scene from iteration {best_iteration} (score: {best_score}/10)")
+        return best_meshes, best_scene_data, history
     
     return meshes, scene_data, history
 
@@ -1564,13 +1599,13 @@ if __name__ == "__main__":
     print("=" * 60)
     print("Stage 1: LLM → Semantic Entities")
     print("Stage 2: Entity Agent → Primitive Objects (deterministic)")
-    print("Stage 3: Vision Critic → Feedback Loop")
+    print("Stage 3: Vision Critic → Feedback Loop (keeps best score)")
     print("-" * 60)
     print("Commands:")
     print("  [prompt]     - Generate scene (with auto-refinement)")
     print("  /norefine    - Disable auto-refinement for next prompt")
     print("  /refine      - Enable auto-refinement (default)")
-    print("  /iterations N - Set max refinement iterations (default: 3)")
+    print("  /iterations N - Set max refinement iterations (default: 5)")
     print("  quit         - Exit")
     print("-" * 60)
     print("Examples:")
@@ -1580,7 +1615,7 @@ if __name__ == "__main__":
     print()
     
     auto_refine = True
-    max_iterations = 3
+    max_iterations = 5
     
     while True:
         prompt = input("Describe a scene: ").strip()
@@ -1638,37 +1673,3 @@ if __name__ == "__main__":
             print(f"  ✗ Error: {e}\n")
             import traceback
             traceback.print_exc()
-        
-        if prompt.lower() in ['quit', 'exit', 'q']:
-            break
-        if not prompt:
-            continue
-        
-        print(f"\n🔨 Processing: {prompt}")
-        try:
-            # Stage 1: Get semantic entities
-            scene_data = get_entities_from_ai(prompt)
-            entity_count = len(scene_data.get("entities", []))
-            print(f"  ✓ Stage 1: Got {entity_count} entities")
-            if scene_data.get("scene_description"):
-                print(f"    Description: {scene_data['scene_description']}")
-            
-            # Stage 2: Decompose to primitives
-            primitives = process_scene(scene_data)
-            print(f"  ✓ Stage 2: Generated {len(primitives)} primitives")
-            
-            # Render
-            print("  Opening 3D viewer...\n")
-            plotter = pv.Plotter()
-            plotter.background_color = "lightblue"
-            
-            meshes = build_scene(primitives)
-            for item in meshes:
-                plotter.add_mesh(item["mesh"], color=item["color"], show_edges=False)
-            
-            plotter.add_axes()
-            plotter.camera_position = 'iso'
-            plotter.show()
-            
-        except Exception as e:
-            print(f"  ✗ Error: {e}\n")

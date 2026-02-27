@@ -77,10 +77,10 @@ python main_v2.py
 
 | Command | Description |
 |---------|-------------|
-| `[prompt]` | Generate scene with auto-refinement |
+| `[prompt]` | Generate scene with auto-refinement (keeps best score) |
 | `/norefine` | Disable feedback loop for next prompt |
 | `/refine` | Enable feedback loop (default) |
-| `/iterations N` | Set max refinement iterations (default: 3) |
+| `/iterations N` | Set max refinement iterations (default: 5) |
 | `quit` | Exit |
 
 ## Feedback Loop

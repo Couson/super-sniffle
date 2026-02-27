@@ -57,7 +57,7 @@ def save_screenshot(meshes, filename):
     return filepath
 
 
-def run_tests(max_iterations=3, target_score=8):
+def run_tests(max_iterations=5, target_score=8):
     """Run all test prompts and collect results."""
     results = []
     
@@ -82,19 +82,27 @@ def run_tests(max_iterations=3, target_score=8):
             # Collect iteration data
             iterations_used = len(history)
             
-            # Get scores - handle None feedback on last iteration
+            # Get scores - find initial and best (max) score
             initial_score = "N/A"
-            final_score = "N/A"
+            best_score = "N/A"
+            best_iteration = 1
             if history:
-                fb = history[0].get("feedback")
-                if fb:
-                    initial_score = fb.get("score", "N/A")
-                # Find last iteration with feedback
-                for h in reversed(history):
-                    fb = h.get("feedback")
-                    if fb:
-                        final_score = fb.get("score", "N/A")
-                        break
+                # Initial score from first iteration
+                if history[0].get("score") is not None:
+                    initial_score = history[0].get("score")
+                elif history[0].get("feedback"):
+                    initial_score = history[0]["feedback"].get("score", "N/A")
+                
+                # Find best (max) score across all iterations
+                max_score = -1
+                for i, h in enumerate(history):
+                    score = h.get("score")
+                    if score is None and h.get("feedback"):
+                        score = h["feedback"].get("score", 0)
+                    if score is not None and score > max_score:
+                        max_score = score
+                        best_score = score
+                        best_iteration = i + 1
             
             # Count entities and primitives (handle None scene_data)
             entity_count = len(scene_data.get("entities", [])) if scene_data else 0
@@ -118,7 +126,8 @@ def run_tests(max_iterations=3, target_score=8):
                 "prompt": test["prompt"],
                 "iterations": iterations_used,
                 "initial_score": initial_score,
-                "final_score": final_score,
+                "best_score": best_score,
+                "best_iteration": best_iteration,
                 "entity_count": entity_count,
                 "primitive_count": primitive_count,
                 "mesh_count": mesh_count,
@@ -131,9 +140,9 @@ def run_tests(max_iterations=3, target_score=8):
             
             print(f"\n✓ Completed: {test['name']}")
             print(f"  Iterations: {iterations_used}")
-            print(f"  Score: {initial_score} → {final_score}")
+            print(f"  Score: {initial_score} → {best_score} (best at iteration {best_iteration})")
             print(f"  Entities: {entity_count}, Primitives: {primitive_count}")
-            print(f"  Issues fixed: {len(all_issues)}")
+            print(f"  Issues found: {len(all_issues)}")
             print(f"  Screenshot: {screenshot_path}")
             
         except Exception as e:
@@ -160,17 +169,17 @@ def generate_markdown_table(results):
 
 ### Test Summary
 
-| # | Scene | Initial Score | Final Score | Iterations | Entities | Issues Fixed | Status |
-|---|-------|---------------|-------------|------------|----------|--------------|--------|
+| # | Scene | Initial Score | Best Score | Best Iter | Iterations | Entities | Issues | Status |
+|---|-------|---------------|------------|-----------|------------|----------|--------|--------|
 """
     
     for i, r in enumerate(results, 1):
         if r["success"]:
             status = "✅"
-            table += f"| {i} | {r['name']} | {r['initial_score']} | {r['final_score']} | {r['iterations']} | {r['entity_count']} | {r['total_issues']} | {status} |\n"
+            table += f"| {i} | {r['name']} | {r['initial_score']} | {r['best_score']} | {r['best_iteration']} | {r['iterations']} | {r['entity_count']} | {r['total_issues']} | {status} |\n"
         else:
             status = "❌"
-            table += f"| {i} | {r['name']} | - | - | - | - | - | {status} |\n"
+            table += f"| {i} | {r['name']} | - | - | - | - | - | - | {status} |\n"
     
     # Detailed findings
     table += """
@@ -190,7 +199,7 @@ def generate_markdown_table(results):
 |--------|-------|
 | Iterations | {r['iterations']} |
 | Initial Score | {r['initial_score']}/10 |
-| Final Score | {r['final_score']}/10 |
+| Best Score | {r['best_score']}/10 (iteration {r['best_iteration']}) |
 | Entities Generated | {r['entity_count']} |
 | Primitives | {r['primitive_count']} |
 | Meshes | {r['mesh_count']} |
