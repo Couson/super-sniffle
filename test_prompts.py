@@ -47,7 +47,19 @@ def save_screenshot(meshes, filename):
     for item in meshes:
         plotter.add_mesh(item["mesh"], color=item["color"], show_edges=False)
     
-    plotter.camera_position = 'iso'
+    # Auto-center camera based on scene bounds
+    if meshes:
+        bounds = plotter.bounds  # (xmin, xmax, ymin, ymax, zmin, zmax)
+        center_x = (bounds[0] + bounds[1]) / 2
+        center_y = (bounds[2] + bounds[3]) / 2
+        center_z = (bounds[4] + bounds[5]) / 2
+        scene_size = max(bounds[1] - bounds[0], bounds[3] - bounds[2], bounds[5] - bounds[4])
+        dist = scene_size * 1.5
+        plotter.camera.focal_point = (center_x, center_y, center_z)
+        plotter.camera.position = (center_x + dist, center_y + dist, center_z + dist * 0.7)
+        plotter.camera.up = (0, 0, 1)
+    else:
+        plotter.camera_position = 'iso'
     plotter.camera.zoom(0.8)
     
     os.makedirs("assets", exist_ok=True)
@@ -237,7 +249,7 @@ if __name__ == "__main__":
     print("\n🧪 Running Feedback Loop Tests")
     print("=" * 60)
     
-    results = run_tests(max_iterations=3, target_score=8)
+    results = run_tests(max_iterations=5, target_score=8)
     
     # Generate and print markdown
     markdown = generate_markdown_table(results)

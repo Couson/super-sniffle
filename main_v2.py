@@ -1239,14 +1239,19 @@ OUTPUT FORMAT
 ═══════════════════════════════════════════════════════════
 {
   "scene_description": "Brief description of the scene",
-  "ground": {"type": "plane", "width": 100, "depth": 100, "color": "green"},
+  "ground": {"type": "plane", "width": 100, "depth": 100, "center": [0, 0, 0], "color": "green"},
   "entities": [
     {"type": "entity_type", "param1": value, "center": [x, y, z], ...},
     ...
   ]
 }
 
-Use appropriate positioning (center=[x, y, z]) to arrange entities spatially.
+IMPORTANT POSITIONING RULES:
+- CENTER the scene around [0, 0, 0]. The ground should be at center [0, 0, 0].
+- Distribute entities symmetrically around the origin when possible.
+- Keep all entity centers within the ground bounds (typically -40 to +40 for x and y).
+- Z coordinate for ground-level objects should be 0.
+
 Return ONLY valid JSON."""
 
 
@@ -1370,8 +1375,23 @@ def render_to_image(meshes: list, camera_position='iso') -> str:
     for item in meshes:
         plotter.add_mesh(item["mesh"], color=item["color"], show_edges=False)
     
-    plotter.camera_position = camera_position
-    plotter.camera.zoom(0.8)
+    # Calculate scene bounds and center camera on it
+    if meshes:
+        bounds = plotter.bounds  # (xmin, xmax, ymin, ymax, zmin, zmax)
+        center_x = (bounds[0] + bounds[1]) / 2
+        center_y = (bounds[2] + bounds[3]) / 2
+        center_z = (bounds[4] + bounds[5]) / 2
+        scene_size = max(bounds[1] - bounds[0], bounds[3] - bounds[2], bounds[5] - bounds[4])
+        
+        # Set camera to look at scene center from isometric angle
+        dist = scene_size * 1.5
+        plotter.camera.focal_point = (center_x, center_y, center_z)
+        plotter.camera.position = (center_x + dist, center_y + dist, center_z + dist * 0.7)
+        plotter.camera.up = (0, 0, 1)
+    else:
+        plotter.camera_position = camera_position
+    
+    plotter.camera.zoom(0.9)
     
     # Save to temp file
     with tempfile.NamedTemporaryFile(suffix='.png', delete=False) as f:
@@ -1663,7 +1683,20 @@ if __name__ == "__main__":
                 plotter.add_mesh(item["mesh"], color=item["color"], show_edges=False)
             
             plotter.add_axes()
-            plotter.camera_position = 'iso'
+            
+            # Auto-center camera based on scene bounds
+            if meshes:
+                bounds = plotter.bounds  # (xmin, xmax, ymin, ymax, zmin, zmax)
+                center_x = (bounds[0] + bounds[1]) / 2
+                center_y = (bounds[2] + bounds[3]) / 2
+                center_z = (bounds[4] + bounds[5]) / 2
+                scene_size = max(bounds[1] - bounds[0], bounds[3] - bounds[2], bounds[5] - bounds[4])
+                dist = scene_size * 1.5
+                plotter.camera.focal_point = (center_x, center_y, center_z)
+                plotter.camera.position = (center_x + dist, center_y + dist, center_z + dist * 0.7)
+            else:
+                plotter.camera_position = 'iso'
+            
             plotter.show()
             
             # Reset auto_refine if it was disabled

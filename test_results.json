@@ -2,104 +2,109 @@
   {
     "name": "Desert Oasis",
     "prompt": "a desert oasis with palm trees, a small pond, and scattered rocks surrounded by sand dunes",
-    "iterations": 3,
-    "initial_score": 5,
-    "final_score": 4,
-    "entity_count": 11,
-    "primitive_count": 12,
-    "mesh_count": 39,
-    "total_issues": 8,
+    "iterations": 5,
+    "initial_score": 6,
+    "best_score": 6,
+    "best_iteration": 1,
+    "entity_count": 13,
+    "primitive_count": 14,
+    "mesh_count": 50,
+    "total_issues": 22,
     "issue_types": {
-      "missing": 3,
-      "composition": 2,
-      "position": 1,
       "scale": 1,
-      "color": 1
+      "position": 4,
+      "composition": 5,
+      "color": 6,
+      "missing": 6
     },
     "screenshot": "assets/desert_oasis.png",
     "success": true,
-    "scene_description": "A desert oasis with palm trees, a small pond surrounded by sand dunes and scattered rocks."
+    "scene_description": "A desert oasis with palm trees, a small pond, and scattered rocks surrounded by sand dunes."
   },
   {
     "name": "Space Station",
     "prompt": "a futuristic space station platform with cylindrical modules, a communication tower, and landing pads",
-    "iterations": 3,
+    "iterations": 5,
     "initial_score": 6,
-    "final_score": 6,
-    "entity_count": 10,
-    "primitive_count": 12,
-    "mesh_count": 12,
-    "total_issues": 6,
+    "best_score": 7,
+    "best_iteration": 5,
+    "entity_count": 11,
+    "primitive_count": 21,
+    "mesh_count": 21,
+    "total_issues": 18,
     "issue_types": {
-      "composition": 2,
-      "missing": 1,
+      "missing": 2,
+      "position": 9,
+      "composition": 3,
       "color": 1,
-      "position": 2
+      "scale": 3
     },
     "screenshot": "assets/space_station.png",
     "success": true,
-    "scene_description": "A futuristic space station platform with cylindrical modules, a communication tower, and landing pads, arranged for optimal functionality and aesthetics."
+    "scene_description": "A futuristic space station platform with cylindrical modules, a communication tower, landing pads, and additional structures for a denser layout."
   },
   {
     "name": "Japanese Garden",
     "prompt": "a serene Japanese garden with a small bridge over a pond, stone lanterns, and bonsai trees",
-    "iterations": 3,
-    "initial_score": 5,
-    "final_score": 5,
+    "iterations": 5,
+    "initial_score": 6,
+    "best_score": 6,
+    "best_iteration": 1,
     "entity_count": 10,
-    "primitive_count": 15,
-    "mesh_count": 51,
-    "total_issues": 7,
+    "primitive_count": 13,
+    "mesh_count": 29,
+    "total_issues": 21,
     "issue_types": {
-      "missing": 3,
-      "composition": 2,
-      "position": 1,
-      "scale": 1
+      "missing": 8,
+      "scale": 6,
+      "composition": 5,
+      "position": 2
     },
     "screenshot": "assets/japanese_garden.png",
     "success": true,
-    "scene_description": "A serene Japanese garden featuring a bridge over a pond surrounded by bonsai trees and stone lanterns, with elements balanced for tranquility."
+    "scene_description": "A serene Japanese garden featuring a small bridge over a pond, with stone lanterns and bonsai trees."
   },
   {
     "name": "Mountain Village",
     "prompt": "a small mountain village with wooden cabins, a church, and pine trees on a hillside",
-    "iterations": 3,
+    "iterations": 5,
     "initial_score": 5,
-    "final_score": 4,
-    "entity_count": 8,
-    "primitive_count": 23,
-    "mesh_count": 59,
-    "total_issues": 6,
+    "best_score": 5,
+    "best_iteration": 1,
+    "entity_count": 7,
+    "primitive_count": 24,
+    "mesh_count": 69,
+    "total_issues": 20,
     "issue_types": {
-      "position": 1,
-      "scale": 1,
-      "missing": 2,
-      "color": 1,
-      "composition": 1
+      "position": 6,
+      "composition": 5,
+      "scale": 5,
+      "missing": 4
     },
     "screenshot": "assets/mountain_village.png",
     "success": true,
-    "scene_description": "A small mountain village with wooden cabins, a church, and pine trees on a hillside."
+    "scene_description": "A small mountain village situated on a hillside with wooden cabins, a church, and pine trees."
   },
   {
     "name": "Coastal Harbor",
     "prompt": "a coastal harbor with a lighthouse, wooden pier, boats, and a stone bridge",
-    "iterations": 3,
-    "initial_score": 4,
-    "final_score": 4,
-    "entity_count": 7,
-    "primitive_count": 25,
-    "mesh_count": 25,
-    "total_issues": 9,
+    "iterations": 5,
+    "initial_score": 5,
+    "best_score": 5,
+    "best_iteration": 1,
+    "entity_count": 6,
+    "primitive_count": 19,
+    "mesh_count": 19,
+    "total_issues": 26,
     "issue_types": {
-      "position": 2,
-      "missing": 3,
+      "missing": 7,
+      "position": 13,
+      "scale": 3,
       "composition": 2,
-      "color": 1,
-      "scale": 1
+      "color": 1
     },
     "screenshot": "assets/coastal_harbor.png",
     "success": true,
-    "scene_description": "A bustling coastal harbor with a centered lighthouse on an island, a stone bridge, a wooden pier, and multiple boats."
+    "scene_description": "A coastal harbor with a lighthouse, wooden pier, boats, and a stone bridge."
   }
 ]

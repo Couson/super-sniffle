@@ -97,136 +97,117 @@ The loop continues until the target score is reached or max iterations hit.
 
 ## Feedback Loop Test Results
 
-We tested 5 diverse prompts through the feedback loop to evaluate the system's ability to iteratively improve scene generation.
+We tested 5 diverse prompts through the feedback loop to evaluate the system's ability to iteratively improve scene generation. **The system keeps the best-scoring scene across all iterations.**
 
 ### Test Summary
 
-| # | Scene | Initial Score | Final Score | Iterations | Entities | Meshes | Issues | Screenshot |
-|---|-------|---------------|-------------|------------|----------|--------|--------|------------|
-| 1 | Desert Oasis | 5/10 | 4/10 | 3 | 11 | 39 | 8 | ![](assets/desert_oasis.png) |
-| 2 | Space Station | 6/10 | 6/10 | 3 | 10 | 12 | 6 | ![](assets/space_station.png) |
-| 3 | Japanese Garden | 5/10 | 5/10 | 3 | 10 | 51 | 7 | ![](assets/japanese_garden.png) |
-| 4 | Mountain Village | 5/10 | 4/10 | 3 | 8 | 59 | 6 | ![](assets/mountain_village.png) |
-| 5 | Coastal Harbor | 4/10 | 4/10 | 3 | 7 | 25 | 9 | ![](assets/coastal_harbor.png) |
+| # | Scene | Initial | Best | Best Iter | Iterations | Meshes | Screenshot |
+|---|-------|---------|------|-----------|------------|--------|------------|
+| 1 | Desert Oasis | 4/10 | 5/10 | 2 | 3 | 37 | ![](assets/desert_oasis.png) |
+| 2 | Space Station | 6/10 | 6/10 | 1 | 3 | 9 | ![](assets/space_station.png) |
+| 3 | Japanese Garden | 5/10 | 5/10 | 1 | 3 | 33 | ![](assets/japanese_garden.png) |
+| 4 | Mountain Village | 5/10 | 5/10 | 1 | 3 | 55 | ![](assets/mountain_village.png) |
+| 5 | Coastal Harbor | 5/10 | 5/10 | 1 | 3 | 19 | ![](assets/coastal_harbor.png) |
+
+**Key: Best Iter** = Iteration with highest score (system returns this scene)
 
 ### Detailed Iteration Analysis
 
 <details>
-<summary><b>Desert Oasis</b></summary>
+<summary><b>Desert Oasis</b> - Score improved: 4 → 5 (kept iteration 2)</summary>
 
 **Prompt:** `a desert oasis with palm trees, a small pond, and scattered rocks surrounded by sand dunes`
 
-| Iteration | Entities | Meshes | Score | Issues Identified |
-|-----------|----------|--------|-------|-------------------|
-| 1 | 13 | 50 | 5/10 | Pond missing, rocks missing, scene sparse |
-| 2 | 9 | 37 | 4/10 | Sand dunes not visible, elements clustered, mountains too small |
-| 3 | 11 | 39 | - | Final refinement with improved layout |
+| Iteration | Entities | Meshes | Score | Result |
+|-----------|----------|--------|-------|--------|
+| 1 | 9 | 28 | 4/10 | Pond missing, trees clustered, scene sparse |
+| 2 | 9 | 37 | **5/10** | ★ Best - Improved with pond and better layout |
+| 3 | 10 | 38 | 5/10 | Similar score, iteration 2 kept |
 
-**Critic Feedback Examples:**
+**Critic Feedback:**
 - "The pond is missing from the scene"
-- "Rocks are missing from the scene"
-- "The scene feels sparse with only trees and dunes visible"
-- "Sand dunes are not visible in the scene"
-- "The rocks and trees are clustered too closely together"
-
-**Issue Types:** missing (3), composition (2), position (1), scale (1), color (1)
+- "The palm trees are positioned too close together"
+- "The scene appears too sparse with emphasis on empty space"
 
 ![Desert Oasis](assets/desert_oasis.png)
 
 </details>
 
 <details>
-<summary><b>Space Station</b></summary>
+<summary><b>Space Station</b> - Best at iteration 1 (later iterations didn't improve)</summary>
 
 **Prompt:** `a futuristic space station platform with cylindrical modules, a communication tower, and landing pads`
 
-| Iteration | Entities | Meshes | Score | Issues Identified |
-|-----------|----------|--------|-------|-------------------|
-| 1 | 9 | 11 | 6/10 | Scene sparse, no communication equipment visible, colors monotone |
-| 2 | 13 | 15 | 6/10 | Tower floating, landing pad overlaps, layout too sparse |
-| 3 | 10 | 12 | - | Final refinement with better arrangement |
+| Iteration | Entities | Meshes | Score | Result |
+|-----------|----------|--------|-------|--------|
+| 1 | 7 | 9 | **6/10** | ★ Best - Basic layout established |
+| 2 | 9 | 19 | 6/10 | Tower floating, landing pad overlaps |
+| 3 | 12 | 19 | 6/10 | No improvement, iteration 1 returned |
 
-**Critic Feedback Examples:**
-- "The scene feels sparse and lacks visual interest"
-- "There is no visible communication equipment on the tower"
-- "The colors are too monotone, with many grays"
-- "The central communication tower is floating above the platform"
-- "One of the landing pads overlaps with the edge of the platform"
-
-**Issue Types:** composition (2), position (2), missing (1), color (1)
+**Critic Feedback:**
+- "The scene looks sparse, elements too spread out"
+- "Colors of cylinders and platform blend too much"
+- "Landing pad on edge of platform seems unbalanced"
 
 ![Space Station](assets/space_station.png)
 
 </details>
 
 <details>
-<summary><b>Japanese Garden</b></summary>
+<summary><b>Japanese Garden</b> - Best at iteration 1</summary>
 
 **Prompt:** `a serene Japanese garden with a small bridge over a pond, stone lanterns, and bonsai trees`
 
-| Iteration | Entities | Meshes | Score | Issues Identified |
-|-----------|----------|--------|-------|-------------------|
-| 1 | 10 | 33 | 5/10 | Bonsai trees absent, stone lanterns missing, composition sparse |
-| 2 | 9 | 50 | 5/10 | Stone lanterns still missing, trees crowded, bridge too short |
-| 3 | 10 | 51 | - | Final refinement with balanced elements |
+| Iteration | Entities | Meshes | Score | Result |
+|-----------|----------|--------|-------|--------|
+| 1 | 10 | 33 | **5/10** | ★ Best - Bridge and pond present |
+| 2 | 14 | 51 | 5/10 | More elements but same score |
+| 3 | 19 | 93 | 5/10 | Many meshes but quality unchanged |
 
-**Critic Feedback Examples:**
-- "Bonsai trees are absent from the scene"
-- "Stone lanterns are not visible in the scene"
-- "The scene composition is sparse overall"
-- "Some trees are too close to the pond, giving a crowded appearance"
-- "Bridge is too short in relation to the pond"
-
-**Issue Types:** missing (3), composition (2), position (1), scale (1)
+**Critic Feedback:**
+- "Bonsai trees are missing from the scene"
+- "Stone lanterns are not visible"
+- "The scene feels too sparse and empty"
 
 ![Japanese Garden](assets/japanese_garden.png)
 
 </details>
 
 <details>
-<summary><b>Mountain Village</b></summary>
+<summary><b>Mountain Village</b> - Score dropped but best kept (5 → 3 → 3, returned 5)</summary>
 
 **Prompt:** `a small mountain village with wooden cabins, a church, and pine trees on a hillside`
 
-| Iteration | Entities | Meshes | Score | Issues Identified |
-|-----------|----------|--------|-------|-------------------|
-| 1 | 8 | 59 | 5/10 | Buildings not on hillside, trees too small, more trees needed |
-| 2 | 10 | 79 | 4/10 | Cabins and pine trees missing, composition sparse |
-| 3 | 8 | 59 | - | Final refinement with village elements |
+| Iteration | Entities | Meshes | Score | Result |
+|-----------|----------|--------|-------|--------|
+| 1 | 8 | 55 | **5/10** | ★ Best - Village with cabins and church |
+| 2 | 12 | 95 | 3/10 | ⚠️ Score dropped - cabins missing! |
+| 3 | 10 | 75 | 3/10 | Still low, iteration 1 returned |
 
-**Critic Feedback Examples:**
-- "The houses and church should be positioned on the hillside"
-- "The trees are too small compared to the houses and church"
-- "Additional trees are needed to create a forested appearance"
-- "Wooden cabins and pine trees are missing from the scene"
-- "The composition is sparse, lacking balance and detail"
-
-**Issue Types:** missing (2), position (1), scale (1), color (1), composition (1)
+**Critic Feedback:**
+- "Village on flat plane rather than hillside"
+- "Mountain base very small compared to village"
+- Iteration 2: "Wooden cabins and church are missing" (regression!)
 
 ![Mountain Village](assets/mountain_village.png)
 
 </details>
 
 <details>
-<summary><b>Coastal Harbor</b></summary>
+<summary><b>Coastal Harbor</b> - Consistent score across iterations</summary>
 
 **Prompt:** `a coastal harbor with a lighthouse, wooden pier, boats, and a stone bridge`
 
-| Iteration | Entities | Meshes | Score | Issues Identified |
-|-----------|----------|--------|-------|-------------------|
-| 1 | 5 | 20 | 4/10 | Lighthouse on land, boats barely visible, more boats needed |
-| 2 | 7 | 25 | 4/10 | Wooden pier missing, lighthouse off-center, boats too small |
-| 3 | 7 | 25 | - | Final refinement with harbor elements |
+| Iteration | Entities | Meshes | Score | Result |
+|-----------|----------|--------|-------|--------|
+| 1 | 5 | 19 | **5/10** | ★ Best - All elements present |
+| 2 | 5 | 19 | 5/10 | Boats still on pier not water |
+| 3 | 6 | 22 | 5/10 | Consistent, iteration 1 returned |
 
-**Critic Feedback Examples:**
-- "The lighthouse is positioned on land, but appears disconnected"
-- "Multiple boats are barely visible and should be more prominent"
-- "More boats in the designated harbor area to create a bustling scene"
-- "Wooden pier is missing from the scene"
-- "Lighthouse appears to be off-center on the island"
-- "The boats appear too small relative to the lighthouse"
-
-**Issue Types:** missing (3), position (2), composition (2), scale (1), color (1)
+**Critic Feedback:**
+- "Boats are located on pier rather than in water"
+- "Ground is green, doesn't resemble water body"
+- "Stone bridge scale too small relative to lighthouse"
 
 ![Coastal Harbor](assets/coastal_harbor.png)
 
@@ -234,25 +215,26 @@ We tested 5 diverse prompts through the feedback loop to evaluate the system's a
 
 ### Key Observations
 
-1. **Feedback Loop Effectiveness**: The vision critic successfully identifies missing elements, positioning issues, and scale problems across all test scenes.
+1. **Best Score Preservation**: The system now keeps the highest-scoring scene across iterations. Mountain Village showed this clearly: scores went 5→3→3, but iteration 1 (score 5) was returned.
 
 2. **Issue Categories Detected** (from 5 test scenes):
    | Issue Type | Count | Description |
    |------------|-------|-------------|
+   | Position | 15 | Objects floating, overlapping, or misplaced |
    | Missing | 12 | Elements from prompt not rendered |
-   | Composition | 9 | Overall layout problems (sparse, unbalanced) |
-   | Position | 7 | Objects floating or incorrectly placed |
-   | Scale | 4 | Size mismatches between objects |
+   | Composition | 10 | Layout too sparse or unbalanced |
+   | Scale | 5 | Size mismatches between objects |
    | Color | 4 | Colors not matching expectations |
 
-3. **Scene Complexity**: Final scenes range from 12-59 meshes depending on prompt complexity.
+3. **Iteration Patterns**: 
+   - Desert Oasis improved (4→5) and kept iteration 2
+   - 4/5 scenes had best score at iteration 1
+   - Later iterations sometimes regress (Mountain Village: 5→3)
 
-4. **Mesh Complexity**: More complex scenes generate more meshes (Mountain Village: 125 meshes, Japanese Garden: 46 meshes).
-
-5. **Limitations Observed**:
+4. **Limitations Observed**:
    - Some specialized entities (bonsai, stone lanterns) lack decomposition rules
    - Z-positioning (floating objects) is a recurring challenge
-   - Color naming inconsistencies (e.g., "sandy tan" not recognized)
+   - Color naming inconsistencies (e.g., "sandy brown" not recognized)
 
 ## Supported Entities
 
