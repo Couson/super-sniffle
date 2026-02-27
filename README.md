@@ -95,13 +95,13 @@ We tested 5 diverse prompts through the feedback loop to evaluate the system's a
 
 ### Test Summary
 
-| # | Scene | Prompt | Initial Score | Best Score | Iterations | Entities | Key Issues Found |
-|---|-------|--------|---------------|------------|------------|----------|------------------|
-| 1 | Desert Oasis | "a desert oasis with palm trees, a small pond, and scattered rocks surrounded by sand dunes" | 4/10 | 5/10 | 3 | 9→12 | Missing pond, clustered trees, invisible rocks |
-| 2 | Space Station | "a futuristic space station platform with cylindrical modules, a communication tower, and landing pads" | 7/10 | 7/10 | 3 | 6→15 | Floating tower, similar colors, sparse layout |
-| 3 | Japanese Garden | "a serene Japanese garden with a small bridge over a pond, stone lanterns, and bonsai trees" | 5/10 | 5/10 | 3 | 9→18 | Missing lanterns & bonsai, floating bridge |
-| 4 | Mountain Village | "a small mountain village with wooden cabins, a church, and pine trees on a hillside" | 4/10 | 5/10 | 3 | 7→10 | Missing cabins, missing pine trees, floating church |
-| 5 | Coastal Harbor | "a coastal harbor with a lighthouse, wooden pier, boats, and a stone bridge" | 5/10 | 5/10 | 3 | 6→6 | Water not flush, boats floating, missing pier |
+| # | Scene | Prompt | Initial Score | Final Score | Iterations | Entities | Issues Found |
+|---|-------|--------|---------------|-------------|------------|----------|--------------|
+| 1 | Desert Oasis | "a desert oasis with palm trees, a small pond, and scattered rocks surrounded by sand dunes" | 5/10 | 4/10 | 3 | 10 | 8 |
+| 2 | Space Station | "a futuristic space station platform with cylindrical modules, a communication tower, and landing pads" | 5/10 | 6/10 | 3 | 6 | 7 |
+| 3 | Japanese Garden | "a serene Japanese garden with a small bridge over a pond, stone lanterns, and bonsai trees" | 5/10 | 5/10 | 3 | 12 | 7 |
+| 4 | Mountain Village | "a small mountain village with wooden cabins, a church, and pine trees on a hillside" | 3/10 | 5/10 | 3 | 15 | 5 |
+| 5 | Coastal Harbor | "a coastal harbor with a lighthouse, wooden pier, boats, and a stone bridge" | 5/10 | 5/10 | 3 | 6 | 9 |
 
 ### Detailed Iteration Analysis
 
@@ -190,22 +190,21 @@ We tested 5 diverse prompts through the feedback loop to evaluate the system's a
 1. **Feedback Loop Effectiveness**: The vision critic successfully identifies missing elements, positioning issues, and scale problems across all test scenes.
 
 2. **Issue Categories Detected**:
-   | Issue Type | Frequency | Description |
-   |------------|-----------|-------------|
-   | Missing | High | Elements from prompt not rendered |
-   | Position | High | Objects floating or incorrectly placed |
-   | Scale | Medium | Size mismatches between objects |
-   | Color | Medium | Colors not matching expectations |
-   | Composition | Low | Overall layout problems |
+   | Issue Type | Count | Description |
+   |------------|-------|-------------|
+   | Position | 13 | Objects floating or incorrectly placed |
+   | Missing | 10 | Elements from prompt not rendered |
+   | Composition | 7 | Overall layout problems |
+   | Scale | 6 | Size mismatches between objects |
 
-3. **Entity Growth**: The feedback loop consistently adds entities (9→12, 6→15, 9→18) as the critic identifies missing elements.
+3. **Entity Growth**: The feedback loop generates more entities over iterations as the critic identifies missing elements.
 
-4. **Mesh Complexity**: More iterations = more detailed scenes (30→95 meshes for Japanese Garden).
+4. **Mesh Complexity**: More complex scenes generate more meshes (Mountain Village: 125 meshes, Japanese Garden: 46 meshes).
 
 5. **Limitations Observed**:
    - Some specialized entities (bonsai, stone lanterns) lack decomposition rules
    - Z-positioning (floating objects) is a recurring challenge
-   - Color naming inconsistencies (e.g., "sandy_brown" vs "sand")
+   - Color naming inconsistencies (e.g., "sandy tan" not recognized)
 
 ## Supported Entities
 

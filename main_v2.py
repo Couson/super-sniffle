@@ -1475,7 +1475,12 @@ Return the complete scene JSON with all entities."""
         timeout=30.0
     )
     
-    return json.loads(response.choices[0].message.content)
+    result = json.loads(response.choices[0].message.content)
+    # Ensure we return valid scene data, fall back to original if LLM returns null
+    if result is None or not isinstance(result, dict):
+        print("  Warning: LLM returned invalid data, keeping previous scene")
+        return scene_data
+    return result
 
 
 def generate_scene_with_feedback(prompt: str, max_iterations: int = 3, 
@@ -1520,12 +1525,12 @@ def generate_scene_with_feedback(prompt: str, max_iterations: int = 3,
             
             score = feedback.get("score", 0)
             print(f"  ✓ Stage 3: Critic score = {score}/10")
-            print(f"    Analysis: {feedback.get('analysis', '')[:100]}...")
+            print(f"    Analysis: {feedback.get('analysis', '')[:200]}...")
             
             if feedback.get("issues"):
                 print(f"    Issues found: {len(feedback['issues'])}")
-                for issue in feedback["issues"][:3]:
-                    print(f"      - [{issue.get('type')}] {issue.get('description', '')[:50]}")
+                for issue in feedback["issues"][:30]:
+                    print(f"      - [{issue.get('type')}] {issue.get('description', '')[:100]}")
             
             history.append({
                 "iteration": iteration + 1,
