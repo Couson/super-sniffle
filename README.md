@@ -14,7 +14,7 @@ User Prompt → [Stage 1: LLM] → Entities → [Stage 2: Rules] → Render → 
 
 | Stage | Component | Role |
 |-------|-----------|------|
-| 1 | GPT-4o (LLM) | Scene understanding → high-level entities with parameters |
+| 1 | Gemini (LLM) | Scene understanding → high-level entities with parameters |
 | 2 | EntityAgent (Rules) | **Deterministic** decomposition → geometric primitives (no LLM) |
 | 3 | Vision Critic (LLM) | Analyze rendered image → score & feedback → refinement loop |
 
@@ -62,15 +62,18 @@ User Prompt → [Stage 1: LLM] → Entities → [Stage 2: Rules] → Render → 
 # Clone and setup
 git clone https://github.com/yourusername/super-sniffle.git
 cd super-sniffle
-python -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
 
-# Set your OpenAI API key
-echo "OPENAI_API_KEY=sk-your-key" > .env
+# Install uv if you don't have it
+curl -LsSf https://astral.sh/uv/install.sh | sh
+
+# Install dependencies and create virtual environment
+uv sync
+
+# Set your API keys
+echo "GOOGLE_API_KEY=your-google-key" >> .env
 
 # Run
-python main_v2.py
+uv run python main_v2.py
 ```
 
 ## Commands
@@ -85,7 +88,7 @@ python main_v2.py
 
 ## Feedback Loop
 
-The Vision Critic (Stage 3) uses GPT-4o's vision capability to:
+The Vision Critic (Stage 3) uses Gemini's vision capability to:
 
 1. **Analyze** the rendered scene image
 2. **Score** quality from 1-10
@@ -335,7 +338,7 @@ def _decompose_windmill(entity: dict) -> list:
 
 ## Tech Stack
 
-- **OpenAI GPT-4o** - Scene understanding
+- **Google Gemini** - Scene understanding & vision
 - **PyVista** - 3D rendering
 - **NumPy** - Procedural geometry
 

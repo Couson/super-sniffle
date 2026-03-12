@@ -17,11 +17,12 @@ import json
 import base64
 import tempfile
 import os
-from openai import OpenAI
+from google import genai
+from google.genai import types
 from dotenv import load_dotenv
 
 load_dotenv()
-client = OpenAI()
+client = genai.Client()
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -1258,16 +1259,14 @@ Return ONLY valid JSON."""
 def get_entities_from_ai(prompt: str) -> dict:
     """Stage 1: Get semantic entities from LLM."""
     print("  [Stage 1] Calling LLM for semantic entities...")
-    response = client.chat.completions.create(
-        model="gpt-4o",
-        messages=[
-            {"role": "system", "content": ENTITY_PROMPT},
-            {"role": "user", "content": prompt}
-        ],
-        response_format={"type": "json_object"},
-        timeout=30.0
+    response = client.models.generate_content(
+        model="gemini-2.5-flash",
+        contents=f"{ENTITY_PROMPT}\n\nUser request: {prompt}",
+        config=types.GenerateContentConfig(
+            response_mime_type="application/json",
+        ),
     )
-    return json.loads(response.choices[0].message.content)
+    return json.loads(response.text)
 
 
 def process_scene(scene_data: dict) -> list:
@@ -1419,28 +1418,26 @@ def get_critic_feedback(image_base64: str, user_prompt: str, scene_data: dict) -
         scene_json=json.dumps(scene_data, indent=2)[:2000]  # Truncate if too long
     )
     
-    response = client.chat.completions.create(
-        model="gpt-4o",
-        messages=[
-            {
-                "role": "user",
-                "content": [
-                    {"type": "text", "text": prompt},
-                    {
-                        "type": "image_url",
-                        "image_url": {
-                            "url": f"data:image/png;base64,{image_base64}",
-                            "detail": "high"
-                        }
-                    }
-                ]
-            }
+    response = client.models.generate_content(
+        model="gemini-2.5-flash",
+        contents=[
+            types.Content(
+                role="user",
+                parts=[
+                    types.Part.from_text(text=prompt),
+                    types.Part.from_bytes(
+                        data=base64.b64decode(image_base64),
+                        mime_type="image/png",
+                    ),
+                ],
+            ),
         ],
-        response_format={"type": "json_object"},
-        timeout=60.0
+        config=types.GenerateContentConfig(
+            response_mime_type="application/json",
+        ),
     )
     
-    return json.loads(response.choices[0].message.content)
+    return json.loads(response.text)
 
 
 def apply_fixes(scene_data: dict, feedback: dict) -> dict:
@@ -1483,17 +1480,15 @@ Refinement instructions: {feedback.get('refinement_instructions', '')}
 Please generate an IMPROVED scene that fixes these issues. Keep what's working well.
 Return the complete scene JSON with all entities."""
 
-    response = client.chat.completions.create(
-        model="gpt-4o",
-        messages=[
-            {"role": "system", "content": ENTITY_PROMPT},
-            {"role": "user", "content": refinement_prompt}
-        ],
-        response_format={"type": "json_object"},
-        timeout=30.0
+    response = client.models.generate_content(
+        model="gemini-2.5-flash",
+        contents=f"{ENTITY_PROMPT}\n\n{refinement_prompt}",
+        config=types.GenerateContentConfig(
+            response_mime_type="application/json",
+        ),
     )
     
-    result = json.loads(response.choices[0].message.content)
+    result = json.loads(response.text)
     # Ensure we return valid scene data, fall back to original if LLM returns null
     if result is None or not isinstance(result, dict):
         print("  Warning: LLM returned invalid data, keeping previous scene")
